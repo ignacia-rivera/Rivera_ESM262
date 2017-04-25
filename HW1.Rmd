@@ -1,0 +1,77 @@
+---
+title: "HW1"
+author: "ignacia-rivera"
+date: "April 25, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+
+climate = read.table("clim.txt", header = TRUE)
+
+```
+
+## Monthly precipitation 
+
+This is a boxplot showing the montly precipitation observed in the area considering data from `r min(climate$year)` to `r max(climate$year)`.
+
+```{r precipitation, echo=FALSE}
+
+#Monthly precipitation
+
+boxplot(climate$rain ~ climate$month,
+ylab="Precipitation (mm)",
+xlab="Month", col="blue")
+```
+
+## Mean monthly temperature 
+
+This is a boxplot showing the avreage monthly temperature in the area considering data from `r min(climate$year)` to `r max(climate$year)`. Average temperature was estimated as the mean of the max and min temperatures. 
+
+```{r average rain, echo=FALSE}
+
+#Monthly average temperature
+
+climate$avg.temp = (climate$tmin+climate$tmax)/2
+
+boxplot(climate$avg.temp ~ climate$month,
+ylab="Average Temperature (C)",
+xlab="Month", col="orange")
+
+
+```
+
+```{r finding the wettest and the dryest years, echo = FALSE}
+
+Year.Rain = aggregate(climate$rain, by = list(climate$year), sum)
+min.Rain = which.min(Year.Rain$x)
+Year.min = Year.Rain[min.Rain,1]
+max.Rain = which.max(Year.Rain$x)
+Year.max = Year.Rain[max.Rain,1]
+
+```
+
+## The wettest and the dryest years
+
+The wettest year between `r min(climate$year)` and `r max(climate$year)` was `r Year.max` with a total precipitation of `r max.Rain` mm while the dryest year during the same period, was `r Year.min` with a total precipitation of `r min.Rain`.
+
+## How does a wet and a dry year look in a Costa Rican Forest?
+
+Here is a picture from a forest in the Guanacaste region in Costa Rica contrasting the wet and the dry seasons (Source: [Guanacaste dry forest conservation fund](http://www.gdfcf.org/biodiversity-species))
+
+<div align="center"> <img src="C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/Contrast.jpg" height=400> </div> 
+
+```{r}
+#Defining seasons 
+
+climate$season = 4
+climate[climate$month ==  4 | 5 | 6 ] = 1
+climate[climate$month == "7"|"8"|"7"] = 2
+climate[climate$month == "8"|"9"|"10"|"11"] = 3
+
+
+```
+
+
