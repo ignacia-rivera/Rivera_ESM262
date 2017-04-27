@@ -66,12 +66,20 @@ Here is a picture from a forest in the Guanacaste region in Costa Rica contrasti
 ```{r}
 #Defining seasons 
 
-climate$season = 4
-climate[climate$month ==  4 | 5 | 6 ] = 1
-climate[climate$month == "7"|"8"|"7"] = 2
-climate[climate$month == "8"|"9"|"10"|"11"] = 3
+climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6, 'spring', ifelse (climate$month == 7|climate$month == 8|climate$month == 9, 'summer',ifelse(climate$month == 10|climate$month == 11|climate$month == 12, 'fall' , 'winter')))
 
+#Finding the wettest and dryest season
+
+rain.season = aggregate(climate$rain, by= list(climate$season), sum)
+rain.dry.season = which.min(rain.season$x)
+dry.season = rain.season[rain.dry.season,1]
+rain.wet.season = which.max(rain.season$x)
+wet.season = rain.season[rain.wet.season,1]
 
 ```
+
+## The wettest and the dryest seasons
+
+The wettest season in this ecosystem is  `r wet.season` with an accumulated total precipitation of `r rain.wet.season` mm, between `r min(climate$year)` and `r max(climate$year)`. While the dryest season during the same period, was `r dry.season` with a accumulated total precipitation of `r rain.dry.season`.
 
 
