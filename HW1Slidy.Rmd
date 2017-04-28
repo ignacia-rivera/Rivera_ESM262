@@ -1,5 +1,5 @@
 ---
-title: "HW1_Slides"
+title: "ESM 262 HW1- Climate"
 author: "ignacia-rivera"
 date: "April 28, 2017"
 output: slidy_presentation
