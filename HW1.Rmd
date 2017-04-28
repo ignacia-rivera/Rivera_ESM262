@@ -3,8 +3,8 @@ title: "HW1"
 author: "ignacia-rivera"
 date: "April 25, 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -26,7 +26,7 @@ ylab="Precipitation (mm)",
 xlab="Month", col="blue")
 ```
 
-## Mean monthly temperature 
+## Average monthly temperature 
 
 This is a boxplot showing the avreage monthly temperature in the area considering data from `r min(climate$year)` to `r max(climate$year)`. Average temperature was estimated as the mean of the max and min temperatures. 
 
@@ -45,17 +45,18 @@ xlab="Month", col="orange")
 
 ```{r finding the wettest and the dryest years, echo = FALSE}
 
-Year.Rain = aggregate(climate$rain, by = list(climate$year), sum)
-min.Rain = which.min(Year.Rain$x)
-Year.min = Year.Rain[min.Rain,1]
-max.Rain = which.max(Year.Rain$x)
-Year.max = Year.Rain[max.Rain,1]
+year.rain = aggregate(climate$rain, by = list(climate$year), sum)
+wet.year = year.rain[which.max(year.rain$x),1]
+wet.year.rain= year.rain[which.max(year.rain$x),2]
+dry.year = year.rain[which.min(year.rain$x),1]
+dry.year.rain = year.rain[which.min(year.rain$x),2]
+
 
 ```
 
 ## The wettest and the dryest years
 
-The wettest year between `r min(climate$year)` and `r max(climate$year)` was `r Year.max` with a total precipitation of `r max.Rain` mm while the dryest year during the same period, was `r Year.min` with a total precipitation of `r min.Rain`.
+The wettest year between `r min(climate$year)` and `r max(climate$year)` was `r wet.year`, with a total precipitation of `r wet.year.rain` mm. While the dryest year during the same period, was `r dry.year` with a total precipitation of `r dry.year.rain` mm.
 
 ## How does a wet and a dry year look in a Costa Rican Forest?
 
@@ -63,7 +64,7 @@ Here is a picture from a forest in the Guanacaste region in Costa Rica contrasti
 
 <div align="center"> <img src="C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/Contrast.jpg" height=400> </div> 
 
-```{r}
+```{r seasons, echo = FALSE}
 #Defining seasons 
 
 climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6, 'spring', ifelse (climate$month == 7|climate$month == 8|climate$month == 9, 'summer',ifelse(climate$month == 10|climate$month == 11|climate$month == 12, 'fall' , 'winter')))
@@ -71,15 +72,39 @@ climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6
 #Finding the wettest and dryest season
 
 rain.season = aggregate(climate$rain, by= list(climate$season), sum)
-rain.dry.season = which.min(rain.season$x)
-dry.season = rain.season[rain.dry.season,1]
-rain.wet.season = which.max(rain.season$x)
-wet.season = rain.season[rain.wet.season,1]
-
+dry.season = rain.season[which.min(rain.season$x),1]
+rain.dry.season = rain.season[which.min(rain.season$x),2]
+wet.season = rain.season[which.max(rain.season$x),1]
+rain.wet.season = rain.season[which.max(rain.season$x),2]
 ```
 
 ## The wettest and the dryest seasons
 
 The wettest season in this ecosystem is  `r wet.season` with an accumulated total precipitation of `r rain.wet.season` mm, between `r min(climate$year)` and `r max(climate$year)`. While the dryest season during the same period, was `r dry.season` with a accumulated total precipitation of `r rain.dry.season`.
 
+## Winter precipitation and summer temperature
+
+There is no a clear realionship between the total precipitation accumulated over winter and the average summer temperature of the same year (see graph below). However, finding patterns between these type of climatic variables may be helpful to predict weather conditions and water supply for coming years. Allowing to anticipate the consequences of a drought for example. 
+
+```{r summer temperature and winter ppt}
+
+summer= subset(climate, season == 'summer')
+winter = subset(climate, season=='winter')
+
+#Average summer temperature and total winter precipitation per year
+
+summ.temp = aggregate(summer$avg.temp, by = list(summer$year), mean)
+wint.rain = aggregate(winter$rain, by=list(winter$year), sum)
+
+data.plot = data.frame(summ.temp, wint.rain$x)
+colnames(data.plot) = c('Year', 'summer.temp', 'winter.rain')
+
+library(ggplot2)
+
+ggplot(data.plot, aes(summer.temp, winter.rain, col= Year)) + 
+  geom_point()+
+  xlab ('Average summer temperature (F)')+
+  ylab ('Total winter precipitation (mm)')+
+  theme_bw()
+```
 
