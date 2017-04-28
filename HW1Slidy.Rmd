@@ -1,10 +1,8 @@
 ---
-title: "HW1"
+title: "HW1_Slides"
 author: "ignacia-rivera"
-date: "April 25, 2017"
-output:
-  pdf_document: default
-  html_document: default
+date: "April 28, 2017"
+output: slidy_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +15,7 @@ climate = read.table("clim.txt", header = TRUE)
 
 This is a boxplot showing the montly precipitation observed in the area considering data from 1942 to 2016.
 
-```{r precipitation}
+```{r precipitation, echo = FALSE}
 
 #Monthly precipitation
 
@@ -30,7 +28,7 @@ xlab="Month", col="blue")
 
 This is a boxplot showing the avreage monthly temperature in the area considering data from 1942 to 2016. Average temperature was estimated as the mean of the max and min temperatures. 
 
-```{r average rain}
+```{r average rain, echo = FALSE}
 
 #Monthly average temperature
 
@@ -43,7 +41,7 @@ xlab="Month", col="orange")
 
 ```
 
-```{r finding the wettest and the dryest years }
+```{r finding the wettest and the dryest years, echo = FALSE}
 
 #Finding the wettest and the dryest years
 
@@ -62,11 +60,11 @@ The wettest year between 1942 and 2016 was 1982, with a total precipitation of 2
 
 ## How does a wet and a dry year look in a Costa Rican Forest?
 
-Here is a picture from a forest in the Guanacaste region in Costa Rica contrasting the wet and the dry seasons (Source: [Guanacaste dry forest conservation fund](http://www.gdfcf.org/biodiversity-species))
+Here is a picture from a forest in the Guanacaste region in Costa Rica contrasting the wet (rigth) and the dry (left) season (Source: [Guanacaste dry forest conservation fund](http://www.gdfcf.org/biodiversity-species))
 
 <div align="center"> <img src="C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/Contrast.jpg" height=400> </div> 
 
-```{r seasons }
+```{r seasons, echo = FALSE }
 #Defining seasons 
 
 climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6, 'spring', ifelse (climate$month == 7|climate$month == 8|climate$month == 9, 'summer',ifelse(climate$month == 10|climate$month == 11|climate$month == 12, 'fall' , 'winter')))
@@ -88,7 +86,7 @@ The wettest season in this ecosystem is  winter, While the dryest season is summ
 
 There is no a clear realionship between the total precipitation accumulated over winter and the average summer temperature of the same year (see graph below). However, finding patterns between these type of climatic variables may be helpful to predict weather conditions and water supply for coming years. Allowing to anticipate the consequences of a drought for example. 
 
-```{r summer temperature and winter ppt}
+```{r summer temperature and winter ppt, echo= FALSE}
 
 #Seasonal temperature and precipitation relation
 
