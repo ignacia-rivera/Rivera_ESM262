@@ -1,8 +1,9 @@
 ---
-title: "HW1"
-author: "ignacia-rivera"
+title: 'ESM 262: HW1-Climate'
+author: "Ignacia Rivera"
 date: "April 25, 2017"
 output:
+  slidy_presentation: default
   pdf_document: default
   html_document: default
 ---
@@ -64,7 +65,7 @@ The wettest year between 1942 and 2016 was 1982, with a total precipitation of 2
 
 Here is a picture from a forest in the Guanacaste region in Costa Rica contrasting the wet and the dry seasons (Source: [Guanacaste dry forest conservation fund](http://www.gdfcf.org/biodiversity-species))
 
-<div align="center"> <img src="C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/Contrast.jpg" height=400> </div> 
+![Figure 1. Dry (left) and wet (rigth) season in a tropical forest in Guanacaste, Costa Rica ](./Contrast.jpg)
 
 ```{r seasons }
 #Defining seasons 
