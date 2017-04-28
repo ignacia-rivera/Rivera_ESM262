@@ -4,8 +4,9 @@ author: "Ignacia Rivera"
 date: "April 25, 2017"
 output:
   slidy_presentation: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  beamer_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -44,6 +45,8 @@ xlab="Month", col="orange")
 
 ```
 
+## The wettest and the dryest years
+
 ```{r finding the wettest and the dryest years }
 
 #Finding the wettest and the dryest years
@@ -54,10 +57,7 @@ wet.year.rain= year.rain[which.max(year.rain$x),2]
 dry.year = year.rain[which.min(year.rain$x),1]
 dry.year.rain = year.rain[which.min(year.rain$x),2]
 
-
 ```
-
-## The wettest and the dryest years
 
 The wettest year between 1942 and 2016 was 1982, with a total precipitation of 2,136 mm. While the dryest year during the same period, was 2013 with a total precipitation of 264 mm.
 
@@ -67,10 +67,15 @@ Here is a picture from a forest in the Guanacaste region in Costa Rica contrasti
 
 ![Figure 1. Dry (left) and wet (rigth) season in a tropical forest in Guanacaste, Costa Rica ](./Contrast.jpg)
 
+## The wettest and the dryest seasons
+
 ```{r seasons }
 #Defining seasons 
 
-climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6, 'spring', ifelse (climate$month == 7|climate$month == 8|climate$month == 9, 'summer',ifelse(climate$month == 10|climate$month == 11|climate$month == 12, 'fall' , 'winter')))
+climate$season = ifelse(climate$month == 4|climate$month == 5|climate$month == 6, 
+'spring', ifelse (climate$month == 7|climate$month == 8|climate$month == 9, 'summer',
+                ifelse(climate$month == 10|climate$month == 11|climate$month == 12, 'fall' , 
+                       'winter')))
 
 #Finding the wettest and dryest season
 
@@ -80,8 +85,6 @@ rain.dry.season = rain.season[which.min(rain.season$x),2]
 wet.season = rain.season[which.max(rain.season$x),1]
 rain.wet.season = rain.season[which.max(rain.season$x),2]
 ```
-
-## The wettest and the dryest seasons
 
 The wettest season in this ecosystem is  winter, While the dryest season is summer. 
 
