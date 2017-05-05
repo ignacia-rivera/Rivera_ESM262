@@ -2,9 +2,7 @@
 title: "ESM262 Notes"
 author: "Ignacia Rivera"
 date: "May 5, 2017"
-output:
-  html_document: default
-  pdf_document: default
+output: html_notebook
 ---
 
 ## Tidying data
@@ -135,7 +133,6 @@ delays <- flights %>%
  
 
 ```
-
 
 
 
