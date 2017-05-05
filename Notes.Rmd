@@ -1,0 +1,155 @@
+---
+title: "ESM262 Notes"
+author: "Ignacia Rivera"
+date: "May 5, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Tidying data
+
+### Gather and Spread
+
+When we don't have “a variable per column, one observation per row” we can use gather and spread.The function requires the columns you want to gather using ``, a Key, which is the new variable we want to create and repeat and the value which is the second variable paired to the key. 
+
+Spread take the values in a column an transform them into a column titles. 
+
+```{r cars}
+
+library(tidyverse)
+
+View(table4a)
+
+tidy4a <- table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+
+View(tidy4a)
+```
+
+### Separate
+
+When we do not have a value per cell we use separate. 
+
+```{r pressure, echo=FALSE}
+View(table3)
+
+tidy3<- table3 %>% 
+  separate(rate, into = c("cases", "population"), sep = "/")
+
+View(tidy3)
+```
+
+### Unite 
+
+```{r}
+View(table5)
+
+tidy5 <- table5 %>% 
+  unite(new, century, year, sep = "")
+
+```
+
+## Missing values
+
+Here is a data frame with implicit (first quarter of 2016) and explicit missing values (NA). Is always good to have one of the two forms of missing data. complete do combinations of all the possible values that exist for a variable and fill the value of the combinations with no values with an NA. 
+
+```{r}
+
+stocks <- tibble(
+  year   = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr    = c(   1,    2,    3,    4,    2,    3,    4),
+  return = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+
+  )
+
+View(stocks)
+
+# Option 1- Explicit representation of mising values
+
+stocks1 <- stocks %>% 
+  spread(year, return)
+
+View(stocks1)
+
+# Option 2- Implicit representation of missing values 
+
+stocks2 <- stocks %>% 
+  spread(year, return) %>% 
+  gather(year, return, `2015`:`2016`, na.rm = TRUE)
+
+View (stocks2)
+
+#Option 3- Explicit representation of missing values
+
+stocks3 <- stocks %>%
+  complete(year,qtr)
+
+View(stocks3)
+
+```
+
+
+## Transforming data
+
+Once ww ave our data "tidied" enough we can start working with it. For doing this, we usually use dplyr basic functions like: 
+
+Pick observations by their values (filter()).
+Reorder the rows (arrange()).
+Pick variables by their names (select()).
+Create new variables with functions of existing variables (mutate()).
+Collapse many values down to a single summary (summarise()).
+Summarizing stuff for more than just one column we use (summarise_all()).
+
+```{r}
+
+library(nycflights13)
+
+View(flights)
+
+flights_firstdaymonth <- flights %>% 
+  filter(month ==1, day == 1)
+
+#or
+
+flights_firstdaymonth <- flights %>% 
+  filter(month ==1) %>%
+  filter(day == 1)
+
+View(flights_firstdaymonth)
+
+dates <- flights %>% 
+  select(yyyy = year, mm = month, dd= day)
+
+View(dates)
+
+delays <- flights %>%
+  group_by(dest) %>%
+  summarise(
+    count = n(),
+    dist= mean(distance, na.rm= TRUE), 
+    delay= mean(arr_delay, na.rm= TRUE)
+  ) %>%
+  filter(count <20)
+
+ 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
