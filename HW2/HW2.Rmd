@@ -37,7 +37,7 @@ gaz <- gaz_raw %>%
   mutate(DATE_CREATED = as.Date(DATE_CREATED, format= "%m/%d/%Y"), 
          DATE_EDITED = as.Date(DATE_EDITED, format= "%m/%d/%Y" ))
 
-#Assigning NA to missed values
+#Assigning NA to missing values
 #Is this is the fastest way of replece them ?
 
 gaz$PRIM_LAT_DEC <- ifelse(gaz$PRIM_LAT_DEC == 0, NA, gaz$PRIM_LAT_DEC)
@@ -83,14 +83,23 @@ county_center <- gaz %>%
     longMax = max(PRIM_LONG_DEC, na.rm= TRUE)) %>% 
   mutate(lat_center = (latMin + latMax) /2)%>% 
   mutate(long_center = (longMin + longMax)/2) %>% 
-  select(County = COUNTY_NAME, Latitud = lat_center, Longitude= long_center)
+  select(County = COUNTY_NAME, Latitud = lat_center, 
+         Longitude= long_center)
 
-#What are the fractions of the total number of features in each county that are natural? man-made?
+#What are the fractions of the total number of features in each county 
+#that are natural? man-made?
 
-natural <- c("Valley", "Spring" ,"Stream", "Gut", "Canal", "Cape", "Lake", "Summit", "Plain", "Woods",   "Gap",   "Ridge","Bay",  "Beach",   "Channel", "Slope", "Island",  "Basin",   "Cliff", "Swamp", "Area" , "Bend",  "Range", "Falls",  "Forest", "Lava", "Rapids",   "Crater", "Glacier", "Oilfield","Sea", "Arroyo","Isthmus")
+natural <- c("Valley", "Spring" ,"Stream", "Gut", "Canal", 
+             "Cape", "Lake", "Summit", "Plain", "Woods",  
+             "Gap",   "Ridge","Bay",  "Beach",   "Channel", 
+             "Slope", "Island",  "Basin",   "Cliff", "Swamp", 
+             "Area" , "Bend",  "Range", "Falls",  "Forest", "Lava", 
+             "Rapids",   "Crater", "Glacier", "Oilfield","Sea", "Arroyo",
+             "Isthmus")
 
 Feature_category <- tibble(FEATURE_CLASS= unique(gaz$FEATURE_CLASS)) %>% 
-  mutate(category = ifelse(FEATURE_CLASS %in% natural == "TRUE", 1, 0)) #1 = natural, 0= man-made
+  mutate(category = ifelse(FEATURE_CLASS %in% natural == "TRUE", 1, 0)) 
+#1 = natural, 0= man-made
   
 gaz_complete <- inner_join(gaz, Feature_category, by = "FEATURE_CLASS")
 
