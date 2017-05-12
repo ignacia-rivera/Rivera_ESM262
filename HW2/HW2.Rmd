@@ -7,6 +7,8 @@ output:
   html_document: default
 ---
 
+# General Setup
+
 ```{r setup, message= FALSE}
 
 library(tidyverse)
@@ -54,6 +56,8 @@ write_delim(gaz, "C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEn
 
 ```
 
+<div style="page-break-after: always;"></div>
+
 ## Analyzing data
 
 ```{r Analysis, results= "hide"}
@@ -79,7 +83,7 @@ county_center <- gaz %>%
     longMax = max(PRIM_LONG_DEC, na.rm= TRUE)) %>% 
   mutate(lat_center = (latMin + latMax) /2)%>% 
   mutate(long_center = (longMin + longMax)/2) %>% 
-  select(COUNTY_NAME, lat_center, long_center)
+  select(County = COUNTY_NAME, Latitud = lat_center, Longitude= long_center)
 
 #What are the fractions of the total number of features in each county that are natural? man-made?
 
@@ -95,26 +99,28 @@ Features_type <- gaz_complete%>%
   summarise(total = n(), natural = sum(category)) %>% 
   mutate(fraction_natural = natural/total) %>% 
   mutate(fraction_manmade = 1 - fraction_natural) %>% 
-  select(COUNTY_NAME, fraction_natural, fraction_manmade)
+  select(County= COUNTY_NAME, Natural= fraction_natural, Man_Made= fraction_manmade)
 
 ```
 
-## What is the most-frequently-occuring feature name?
+# Answers 
+
+## 1. What is the most-frequently-occuring feature name?
 
  The most-frequently- occuring feature in California is `r Ans1`.
  
-## What is the least-frequently-occuring feature class?
+## 2. What is the least-frequently-occuring feature class?
 
  The least-frequently-occuring feature in California is `r Ans2`.
  
-## What is the approximate center point of each county?
+## 3. What is the approximate center point of each county?
 
 ```{r table 1, echo = FALSE}
 
 kable(county_center, caption = "Longitude and latitude of the center of each county in California.")
 ```
 
-## What are the fractions of the total number of features in each county that are natural? man-made?
+## 4. What are the fractions of the total number of features in each county that are natural? man-made?
 
 ```{r table 2, echo = FALSE}
 
