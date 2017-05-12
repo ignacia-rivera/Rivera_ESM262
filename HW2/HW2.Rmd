@@ -1,0 +1,122 @@
+---
+title: 'HW2: Data Ingest'
+author: "Ignacia Rivera"
+date: "May 9, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, message= FALSE}
+
+library(tidyverse)
+library(knitr)
+
+```
+
+# Importing and tidying data
+
+```{r database, message = FALSE}
+
+#Importing
+
+gaz_raw <- read_delim("C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/HW2/CA_Features_20170401.txt", delim= "|")
+
+#Selecting variables of interest and formating date
+
+gaz <- gaz_raw %>% 
+  select (-COUNTY_NUMERIC, 
+          -STATE_NUMERIC, 
+          -PRIMARY_LAT_DMS, 
+          -PRIM_LONG_DMS, 
+          -SOURCE_LAT_DMS, 
+          -SOURCE_LONG_DMS, 
+          -ELEV_IN_FT) %>% 
+  mutate(DATE_CREATED = as.Date(DATE_CREATED, format= "%m/%d/%Y"), 
+         DATE_EDITED = as.Date(DATE_EDITED, format= "%m/%d/%Y" ))
+
+#Assigning NA to missed values
+#Is this is the fastest way of replece them ?
+
+gaz$PRIM_LAT_DEC <- ifelse(gaz$PRIM_LAT_DEC == 0, NA, gaz$PRIM_LAT_DEC)
+gaz$PRIM_LONG_DEC <- ifelse(gaz$PRIM_LONG_DEC == 0, NA, gaz$PRIM_LONG_DEC)
+gaz$MAP_NAME <- ifelse(gaz$MAP_NAME =='Unknown', NA, gaz$MAP_NAME)
+
+#Selecting observations of interest
+
+gaz <- gaz %>%
+  filter(!(PRIM_LAT_DEC == 'NA' | PRIM_LONG_DEC == 'NA')) %>% 
+  filter(STATE_ALPHA == 'CA')
+
+#Saving the clean tibble
+
+write_delim(gaz, "C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/HW2/gaz.csv", delim= "|")
+
+```
+
+## Analyzing data
+
+```{r Analysis, results= "hide"}
+
+#What is the most-frequently-occuring feature name?
+
+count_feature_name <- count(gaz, FEATURE_NAME)
+Ans1 <- count_feature_name[which.max(count_feature_name$n), 1]
+
+#What is the least-frequently-occuring feature class?
+
+count_feature_class <- count(gaz, FEATURE_CLASS)
+Ans2 <- count_feature_class[which.min(count_feature_class$n), 1]
+
+#What is the approximate center point of each county?
+
+county_center <- gaz %>%
+ group_by(COUNTY_NAME) %>%
+  summarise(
+    latMin = min(PRIM_LAT_DEC, na.rm= TRUE),
+    latMax = max(PRIM_LAT_DEC, na.rm= TRUE),
+    longMin = min(PRIM_LONG_DEC, na.rm= TRUE),
+    longMax = max(PRIM_LONG_DEC, na.rm= TRUE)) %>% 
+  mutate(lat_center = (latMin + latMax) /2)%>% 
+  mutate(long_center = (longMin + longMax)/2) %>% 
+  select(COUNTY_NAME, lat_center, long_center)
+
+#What are the fractions of the total number of features in each county that are natural? man-made?
+
+natural <- c("Valley", "Spring" ,"Stream", "Gut", "Canal", "Cape", "Lake", "Summit", "Plain", "Woods",   "Gap",   "Ridge","Bay",  "Beach",   "Channel", "Slope", "Island",  "Basin",   "Cliff", "Swamp", "Area" , "Bend",  "Range", "Falls",  "Forest", "Lava", "Rapids",   "Crater", "Glacier", "Oilfield","Sea", "Arroyo","Isthmus")
+
+Feature_category <- tibble(FEATURE_CLASS= unique(gaz$FEATURE_CLASS)) %>% 
+  mutate(category = ifelse(FEATURE_CLASS %in% natural == "TRUE", 1, 0)) #1 = natural, 0= man-made
+  
+gaz_complete <- inner_join(gaz, Feature_category, by = "FEATURE_CLASS")
+
+Features_type <- gaz_complete%>% 
+  group_by(COUNTY_NAME) %>% 
+  summarise(total = n(), natural = sum(category)) %>% 
+  mutate(fraction_natural = natural/total) %>% 
+  mutate(fraction_manmade = 1 - fraction_natural) %>% 
+  select(COUNTY_NAME, fraction_natural, fraction_manmade)
+
+```
+
+## What is the most-frequently-occuring feature name?
+
+ The most-frequently- occuring feature in California is `r Ans1`.
+ 
+## What is the least-frequently-occuring feature class?
+
+ The least-frequently-occuring feature in California is `r Ans2`.
+ 
+## What is the approximate center point of each county?
+
+```{r table 1, echo = FALSE}
+
+kable(county_center, caption = "Longitude and latitude of the center of each county in California.")
+```
+
+## What are the fractions of the total number of features in each county that are natural? man-made?
+
+```{r table 2, echo = FALSE}
+
+kable(Features_type, caption = "Fraction of natural and man-made features in each county in California.")
+```

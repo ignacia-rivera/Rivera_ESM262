@@ -134,6 +134,8 @@ delays <- flights %>%
 
 ```
 
+## Data visualization - ggplot
+
 
 
 
