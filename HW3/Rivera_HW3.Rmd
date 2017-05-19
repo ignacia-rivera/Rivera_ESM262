@@ -1,0 +1,127 @@
+---
+title: 'HW3: ggplot'
+author: "Ignacia Rivera"
+date: "May 15, 2017"
+output:
+  html_document: default
+  pdf_document:
+    fig_caption: yes
+    highlight: tango
+---
+
+```{r data and setup, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#reading in data
+
+thinshallow = read.table("C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/HW3/resthin.shallow.txt", header=T)
+thindeep = read.table("C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/HW3/resthin.deep.txt", header=T)
+clim=read.table("C:/Users/Ignacia Rivera/Dropbox/MESM/Quarter VI/ComputingForEnvScience/Rivera_ESM262/HW3/sierraclim.txt",header=T)
+
+#libraries
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
+library(lubridate)
+
+```
+
+## Average monthly evaporation and transpiration 
+
+```{r plot 1, fig.cap= "Average monthly evaporation (upper panel) and transpiration (lower pannel) for shallow and deep locations"}
+
+#data wrangling 
+
+thin <- thindeep %>% 
+mutate(depth = 'deep') 
+
+binded <- thinshallow %>% 
+mutate(depth = 'shallow') %>% 
+bind_rows(thin)
+
+p1 = ggplot(binded)+ 
+  geom_line(aes(x= month, y= evap, col=as.factor(depth) ), stat="summary", fun.y="mean", size =1) +
+  scale_color_brewer(type="qual", palette="Set1", name="Location")+
+  scale_x_discrete(limits = c(seq(1,12)))+
+  labs(y="Evaporation (mm)", x="")+
+  theme_bw()+
+  theme(legend.position = c(0.935, 0.78), legend.background = element_rect(color = "black"))
+ 
+
+p2 = ggplot(binded)+
+  geom_line(aes(x=month, y= trans, col= as.factor(depth)), stat="summary", fun.y="mean", size= 1)+
+  scale_color_brewer(type="qual", palette="Set1")+
+  scale_x_discrete(limits = c(seq(1,12)))+
+  labs(y="Transpiration (mm)", x="Month")+
+  theme_bw()+
+  theme(legend.position= "none")
+  
+grid.arrange(p1,p2)
+```
+
+##  Biomass growth 
+
+```{r plot 2, fig.cap= "Decadal biomass growth (g) for different thin intensities under False (left) and False (rigth) treatment" }
+
+p3 <- ggplot(binded)+ 
+     stat_boxplot(aes(x=as.factor(scen) , y= plantc, fill= as.factor(thin)))+
+     facet_wrap(~as.factor(shared))+
+     scale_fill_brewer(type="seq", palette="BuGn", name="Thin Intensity")+
+     labs(y="Plant growth (cm)", x="Year")+
+     theme_bw()+
+     theme(legend.position = "bottom",legend.background = element_rect(color = "black"))
+
+plot2 <- p3
+plot2
+```
+
+## Monthly patterns in precipitation, evaporation and transpiration
+
+```{r plot 3, fig.cap= "Patterns of monthly precipitation (blue bars) and average evaporation (red line) and transpiration (yellow line)" }
+
+mean_month_rain <- clim %>%
+  group_by(month) %>% 
+  summarise(prec = mean(rain)) 
+
+mean_month_evap_trans <- binded %>%
+  group_by(month) %>% 
+  summarise(evap = mean(evap), trans= mean(trans)) 
+
+anual_water <- inner_join(mean_month_rain, mean_month_evap_trans, by = "month")
+anual_water <- anual_water %>% 
+  gather(type, mm,3:4)
+
+
+plot3 <- ggplot(anual_water)+
+  geom_bar(aes(x = month, y= prec), stat= "identity", fill= "dodgerblue3")+
+  geom_line(aes(x= month, y= mm, col= as.factor(type)), size = 1)+
+  scale_color_manual(values = c("red", "goldenrod1"), name="Type", labels = c("Evaporation", "Transpiration"))+
+  scale_x_discrete(limits = c(seq(1,12)))+
+  scale_y_continuous(limits =c(0,20), expand = c(0,0), sec.axis = sec_axis(~., name="Milimeters of evaporated or transpirated water"))+
+  labs(x="Month", y="Rainfall (mm)")+
+  theme_bw()+
+  theme(legend.position = "bottom",legend.background = element_rect(color = "black"))
+plot3
+```
+
+## Temperature and precipitation relation by season
+
+```{r plot 4, fig.cap= "Temperature (in celcius degrees) and precipitation (mm) relationship in fall (upper left), spring (upper right), summer (down left) and winter (down right)"}
+
+data4 <- clim %>% 
+  group_by(year, month)%>% 
+  summarise(rain = sum(rain), temp= (mean(tmin)+mean(tmax))/2) %>% 
+  mutate(season = ifelse(month == 4|month == 5|month == 6, 'Spring', ifelse (month == 7|month == 8|month == 9, 'Summer', ifelse(month == 10|month == 11|month == 12, 'Fall' , 'Winter'))))
+  
+plot4 <- ggplot(data4)+
+  geom_point(aes(x= rain, y= temp))+
+  stat_smooth(aes(x= rain, y= temp))+
+  facet_wrap(~as.factor(season))+
+  labs(y= expression(paste("Average Temperature"," (", C**degree, ")")), x="Rainfall (mm)")+
+  theme_bw()
+plot4
+
+```
+
