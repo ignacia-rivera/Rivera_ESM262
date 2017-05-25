@@ -8,7 +8,7 @@ catch_summary <-  function(prices, catch, graph= 'Yes'){
   
   # Total revenue for each location
   
-  revenue <- inner_join(prices, catch, by = "fish")
+  revenue <- dplyr::inner_join(prices, catch, by = "fish")
   revenue <-  revenue[,3:ncol(revenue)]* revenue[,2] 
   revenue <- colSums(revenue, na.rm = FALSE)
   

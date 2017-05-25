@@ -49,7 +49,7 @@ fish_function <- function(prices = NULL, catch = NULL, plot = FALSE){
       ggplot2::theme_bw() +
       ggExtra::removeGrid() +
       ggplot2::scale_y_continuous(limits = c(0, 1.1*total_catches), expand = c(0,0)) +
-      ggplot2::labs(title = "Total revenue by site",subtitle = "Dashed line represents total revenue")
+      ggplot2::labs(title = "Total revenue by site",subtitle = "Dashed line represents total catch")
   }
   return(list(frequent_fish = max_by_site,
               site_revenue = revenue,
