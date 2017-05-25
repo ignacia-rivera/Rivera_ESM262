@@ -1,9 +1,21 @@
 ---
 title: "HW4: Programming"
-author: "Ignacia Rivera"
+author: "Ignacia Rivera, Lina Barbosa, Rucha Thakar"
 date: "May 23, 2017"
 output: pdf_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r, echo=FALSE}
+suppressPackageStartupMessages({
+ library(tidyverse) 
+})
+```
+
+# Creating Dataset example 
 
 ```{r monk data}
 fish <- c("Cod", "Dab", "Greysole", "Haddock","Hake", "Pollock")
@@ -11,28 +23,52 @@ price <- c(3.15, 2.85, 5.56, 2.44, 2.21, 1.59 )
 sites <- c("A", "B", "C", "D", "E", "F")
 
 prices <- data.frame(fish, price)
-catch <- matrix(data= sample.int(300, size = length(fish)*length(sites), replace = TRUE), nrow = length(fish), ncol = length(sites))
+set.seed(1) 
+catch <- matrix(data= sample.int(300, size = length(fish)*length(sites), 
+                                 replace = TRUE), nrow = length(fish), 
+                                 ncol = length(sites))
 catch <- data.frame(fish, catch)
 colnames(catch) <- c("fish", unique(sites))
 
 ```
 
-## R Markdown
+# Data Visualization
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+knitr::kable(catch)
+knitr::kable(prices)
 ```
 
-## Including Plots
+# Using fish_function 
 
-You can also embed plots, for example:
+```{r}
+source('~/Documents/GitHub/Rivera_ESM262/HW4/fish_function.R')
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Example <- fish_function(prices = prices, catch = catch, plot = T)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Extract most frequent fish 
+
+```{r}
+Example$frequent_fish %>% 
+  knitr::kable()
+
+```
+
+## Extract total revenue by site 
+
+```{r}
+Example$site_revenue %>% 
+  knitr::kable()
+```
+
+## The total fisheries sum is `r Example$total_catches`
+
+\clearpage
+
+# Plot
+
+```{r}
+Example$plot
+```
+

@@ -5,18 +5,20 @@ catch_summary <-  function(prices, catch, graph= 'Yes'){
   
   most_frequent_index <- apply(catch[,2:ncol(catch)],2,which.max)
   most_frequent <- catch[most_frequent_index, 1]
-  site_summary <- data.frame(site= colnames(catch)[2:ncol(catch)], most_frequent= most_frequent)
   
   # Total revenue for each location
   
-  revenue <- inner_join(prices, catch)
+  revenue <- inner_join(prices, catch, by = "fish")
   revenue <-  revenue[,3:ncol(revenue)]* revenue[,2] 
   revenue <- colSums(revenue, na.rm = FALSE)
-  site_summary$revenue <- revenue
+  
+  site_summary <- data.frame(site= colnames(catch[-1]),
+                             most_frequent= most_frequent,
+                             revenue)
   
   # Add total 
   
-  total_revenue <- sum(site_summary$revenue)
+  total_revenue <- sum(site_summary$revenue, na.rm = T)
   
   # If the graph is required
   
